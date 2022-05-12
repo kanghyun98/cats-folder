@@ -1,48 +1,48 @@
 export default class Breadcrumb {
-  constructor({ $target, data, onClickNav }) {
-    this.state = data;
+  constructor({ $app, path, onClickPath }) {
+    this.state = path;
+    this.handleClickPath = onClickPath;
 
-    this.$breadcrumb = document.createElement('nav');
-    this.$breadcrumb.classList.add('Breadcrumb');
-    this.addEvent(this.$breadcrumb);
-    $target.appendChild(this.$breadcrumb);
+    this.$nav = document.createElement('nav');
+    this.$nav.classList.add('Breadcrumb');
+    this.addEvent(this.$nav);
+    $app.appendChild(this.$nav);
 
-    this.handleClick = onClickNav;
-  }
-
-  setState(data) {
-    this.state = data;
     this.render();
   }
 
-  makePath(path, idx) {
-    return `
-          <div class="path-item" id=${idx}>
-              ${path}
-          </div>
-      `;
+  // Path 상태 업데이트
+  setState(newPath) {
+    this.state = newPath;
+    this.render();
   }
 
-  render() {
-    this.$breadcrumb.innerHTML = '';
+  // 이벤트 처리
+  addEvent($target) {
+    $target.addEventListener('click', (e) => {
+      const $breadcrumbItem = e.target.closest('.BreadcrumbItem');
 
-    let $res = this.makePath('root', 0);
-    if (this.state.length) {
+      if ($breadcrumbItem) {
+        this.handleClickPath($breadcrumbItem);
+      }
+    });
+  }
+
+  // 렌더링
+  render() {
+    this.$nav.innerHTML = '';
+    const $path = this.makePath();
+    this.$nav.innerHTML = $path;
+  }
+
+  makePath() {
+    let $path = `<div class='BreadcrumbItem' id=0>root</div>`;
+    if (this.state.length > 0) {
       this.state.forEach((node, idx) => {
-        $res += this.makePath(node.name, idx + 1);
+        $path += `<div class='BreadcrumbItem' id=${idx + 1}>${node.name}</div>`;
       });
     }
 
-    this.$breadcrumb.innerHTML = $res;
-  }
-
-  addEvent($target) {
-    $target.addEventListener('click', (e) => {
-      const $navItem = e.target.closest('.path-item');
-
-      if ($navItem) {
-        this.handleClick($navItem);
-      }
-    });
+    return $path;
   }
 }

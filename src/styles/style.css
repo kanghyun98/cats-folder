@@ -34,6 +34,7 @@ body {
   display: flex;
   flex-direction: column;
   word-break: keep-all;
+  cursor: pointer;
 }
 
 .Breadcrumb {
@@ -46,6 +47,7 @@ body {
 
 .Breadcrumb > div {
   padding: 4px;
+  cursor: pointer;
 }
 
 .Breadcrumb > div::after {
@@ -56,7 +58,7 @@ body {
   content: '';
 }
 
-.ModalWrapper {
+.Modal {
   z-index: 1;
   width: 100%;
   height: 100%;
@@ -64,6 +66,12 @@ body {
   left: 0;
   top: 0;
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+.ModalOverlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 .ModalContent {
@@ -78,12 +86,6 @@ body {
   max-height: 500px;
 }
 
-.ModalOverlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
 .LoadingWrapper {
   z-index: 1;
   width: 100%;
@@ -91,10 +93,10 @@ body {
   position: fixed;
   left: 0;
   top: 0;
+  background-color: rgba(0, 0, 0, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .LoadingWrapper > img {

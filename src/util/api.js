@@ -1,9 +1,10 @@
-export const request = async (url) => {
+// fetch를 이용한 API 요청 데이터를 반환하는 API
+const request = async (url) => {
   try {
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error('http Error');
+      throw new Error('HTTP ERROR');
     }
 
     return await response.json();
@@ -12,18 +13,15 @@ export const request = async (url) => {
   }
 };
 
-const BASIC_DIR_URL =
-  'https://zl3m4qq0l9.execute-api.ap-northeast-2.amazonaws.com/dev/';
-
-// root: id X, others: id O
-const getDirDataAPI = async (id) => {
+// id에 대한 Nodes를 반환하는 API
+export const getNodesById = async (id) => {
   try {
-    const targetURL = id ? BASIC_DIR_URL + id : BASIC_DIR_URL;
+    const BASIC_API_PATH =
+      'https://zl3m4qq0l9.execute-api.ap-northeast-2.amazonaws.com/dev/';
+    const path = id ? BASIC_API_PATH + id : BASIC_API_PATH;
 
-    return await request(targetURL);
-  } catch (error) {
-    console.log(error);
+    return await request(path);
+  } catch (e) {
+    console.log(e.message);
   }
 };
-
-export default getDirDataAPI;

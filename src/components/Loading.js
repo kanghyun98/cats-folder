@@ -1,10 +1,8 @@
 export default class Loading {
-  constructor({ $target }) {
-    this.$target = $target;
-
+  constructor($body) {
     this.$loadingWrapper = document.createElement('div');
     this.$loadingWrapper.classList.add('LoadingWrapper', 'hidden');
-    $target.appendChild(this.$loadingWrapper);
+    $body.appendChild(this.$loadingWrapper);
 
     this.render();
   }
@@ -14,9 +12,8 @@ export default class Loading {
   }
 
   render() {
-    const $loadingImg = document.createElement('img');
-    $loadingImg.src = './assets/nyan-cat.gif';
-
-    this.$loadingWrapper.appendChild($loadingImg);
+    this.$loadingWrapper.innerHTML = `
+          <img src=${'./assets/nyan-cat.gif'} />
+      `;
   }
 }

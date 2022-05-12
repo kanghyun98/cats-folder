@@ -1,59 +1,61 @@
-const IMAGE_BASIC_URL =
-  'https://fe-dev-matching-2021-03-serverlessdeploymentbuck-t3kpj3way537.s3.ap-northeast-2.amazonaws.com/public';
-
 export default class ImageView {
-  constructor({ $target }) {
-    this.$target = $target;
-    this.imgURL = null;
+  constructor($body) {
+    this.state = {
+      imgURL: '',
+    };
 
     this.$modalWrapper = document.createElement('div');
-    this.$modalWrapper.classList.add('ModalWrapper', 'hidden');
-    $target.appendChild(this.$modalWrapper);
+    this.$modalWrapper.classList.add('Modal', 'hidden');
+    $body.appendChild(this.$modalWrapper);
 
     this.render();
   }
 
   setState(filePath) {
-    const imgURL = IMAGE_BASIC_URL + filePath;
-    this.imgURL = imgURL;
+    const BASIC_IMG_PATH =
+      'https://fe-dev-matching-2021-03-serverlessdeploymentbuck-t3kpj3way537.s3.ap-northeast-2.amazonaws.com/public';
+    this.state = {
+      ...this.state,
+      imgURL: BASIC_IMG_PATH + filePath,
+    };
 
-    this.toggleModal();
     this.render();
-  }
-
-  toggleModal() {
-    this.$modalWrapper.classList.toggle('hidden');
-  }
-
-  onCloseModal() {
-    this.$modalWrapper.classList.add('hidden');
-    this.$modalWrapper.innerHTML = '';
+    this.openModal();
   }
 
   render() {
+    this.$modalWrapper.innerHTML = '';
+
     const $modalContent = document.createElement('div');
     $modalContent.classList.add('ModalContent');
 
-    const $modalImg = document.createElement('img');
-    $modalImg.src = this.imgURL;
+    const $contentImg = document.createElement('img');
+    $contentImg.src = this.state.imgURL;
+    $modalContent.appendChild($contentImg);
 
     const $modalOverlay = document.createElement('div');
     $modalOverlay.classList.add('ModalOverlay');
 
     // 모달 닫기 이벤트 (외부 클릭, esc 클릭)
     $modalOverlay.addEventListener('click', () => {
-      this.onCloseModal();
+      this.closeModal();
     });
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        this.onCloseModal();
+        this.closeModal();
       }
     });
 
-    $modalContent.appendChild($modalImg);
-
-    this.$modalWrapper.appendChild($modalContent);
     this.$modalWrapper.appendChild($modalOverlay);
+    this.$modalWrapper.appendChild($modalContent);
+  }
+
+  closeModal() {
+    this.$modalWrapper.classList.add('hidden');
+  }
+
+  openModal() {
+    this.$modalWrapper.classList.remove('hidden');
   }
 }

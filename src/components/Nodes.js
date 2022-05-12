@@ -1,56 +1,28 @@
 export default class Nodes {
-  constructor({ $target, data, onClickIcon, onClickBack }) {
+  constructor({ $app, nodes, onClickIcon, onClickBackIcon }) {
     this.state = {
-      data,
+      nodes,
       isRoot: true,
     };
+    this.handleClickIcon = onClickIcon;
+    this.handleClickBackIcon = onClickBackIcon;
 
     this.$nodes = document.createElement('ul');
     this.$nodes.classList.add('Nodes');
     this.addEvent(this.$nodes);
-    $target.appendChild(this.$nodes);
+    $app.appendChild(this.$nodes);
 
-    this.handleClickIcon = onClickIcon;
-    this.handleClickBack = onClickBack;
+    this.render(true); // 초기엔 root
   }
 
-  // Nodes 업데이트
-  setState(data, isRoot) {
+  // Nodes 상태 업데이트
+  setState(newNodes, isRoot) {
     this.state = {
-      data,
+      nodes: newNodes,
       isRoot,
     };
+
     this.render();
-  }
-
-  // Icon 만드는 메소드
-  makeIcon(id, name, type) {
-    const iconPath =
-      type === 'DIRECTORY' ? './assets/directory.png' : './assets/file.png';
-    return `
-          <div class="Node" id="${id}">
-              <img src="${iconPath}" />
-              <div>${name}</div>
-          </div>
-      `;
-  }
-
-  // 렌더링 메소드
-  render() {
-    this.$nodes.innerHTML = '';
-
-    let $res = this.state.isRoot
-      ? ''
-      : '<div class="Node"><img src="./assets/prev.png"></div>';
-
-    if (this.state.data) {
-      this.state.data.forEach(({ id, name, type, filePath }) => {
-        const $icon = this.makeIcon(id, name, type);
-        $res += $icon;
-      });
-    }
-
-    this.$nodes.innerHTML = $res;
   }
 
   // 이벤트 처리 (Event Deligation)
@@ -60,18 +32,48 @@ export default class Nodes {
 
       if ($node) {
         const nodeId = $node.id;
-
-        if (!nodeId) {
-          // 뒤로가기
-          this.handleClickBack();
-        } else {
-          // file/directory
-          const selectedNode = this.state.data.find(
+        if (nodeId) {
+          // 폴더, 파일 클릭 시
+          const targetNode = this.state.nodes.find(
             (node) => node.id === nodeId
           );
-          this.handleClickIcon(selectedNode);
+          this.handleClickIcon(targetNode);
+        } else {
+          // 뒤로가기 클릭 시
+          this.handleClickBackIcon();
         }
       }
     });
+  }
+
+  // 렌더링
+  render() {
+    this.$nodes.innerHTML = ''; // $nodes 비우기
+    const $icons = this.makeNodeIcons();
+    this.$nodes.innerHTML = $icons;
+  }
+
+  makeNodeIcons() {
+    let $icons = this.state.isRoot
+      ? ''
+      : `
+          <div class="Node">
+              <img src="./assets/prev.png">
+          </div>
+      `;
+
+    this.state.nodes.forEach(({ id, name, type }) => {
+      const iconImgPath =
+        type === 'DIRECTORY' ? './assets/directory.png' : './assets/file.png';
+
+      $icons += `
+          <div class=Node id=${id}>
+             <img src=${iconImgPath} /> 
+             <div>${name}</div>
+          </div>
+      `;
+    });
+
+    return $icons;
   }
 }
