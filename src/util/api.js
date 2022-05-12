@@ -2,18 +2,13 @@ export const request = async (url) => {
   try {
     const response = await fetch(url);
 
-    if (response.ok) {
-      const data = await response.json();
-      return data;
-    } else {
-      const errorData = await response.json();
-      throw errorData;
+    if (!response.ok) {
+      throw new Error('http Error');
     }
+
+    return await response.json();
   } catch (e) {
-    throw {
-      message: e.message,
-      status: e.status,
-    };
+    console.log(e.message);
   }
 };
 
@@ -25,16 +20,9 @@ const getDirDataAPI = async (id) => {
   try {
     const targetURL = id ? BASIC_DIR_URL + id : BASIC_DIR_URL;
 
-    const data = await request(targetURL);
-    return {
-      isError: false,
-      data,
-    };
+    return await request(targetURL);
   } catch (error) {
-    return {
-      isError: true,
-      data: e,
-    };
+    console.log(error);
   }
 };
 

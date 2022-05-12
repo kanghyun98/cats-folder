@@ -4,6 +4,8 @@ import Breadcrumb from './components/Breadcrumb.js';
 import ImageView from './components/ImageView.js';
 import Loading from './components/Loading.js';
 
+const cache = {};
+
 export default class App {
   constructor($target) {
     // State
@@ -18,12 +20,10 @@ export default class App {
       data: this.state.path,
       onClickNav: async (navItem) => {
         const newPath = this.state.path.slice(0, Number(navItem.id));
-        const newNodes = await this.getDirDataAPIWithLoading(
-          newPath[newPath.length - 1]?.id
-        );
+        const newNodes = cache[newPath[newPath.length - 1]?.id || '0'];
 
         const newState = {
-          nodes: newNodes.data,
+          nodes: newNodes,
           path: newPath,
         };
 
@@ -37,26 +37,30 @@ export default class App {
       data: this.state.nodes,
       onClickIcon: async (node) => {
         if (node.type === 'DIRECTORY') {
-          const newNodes = await this.getDirDataAPIWithLoading(node.id);
+          let newNodes;
+          if (cache[node.id]) {
+            newNodes = cache[node.id];
+          } else {
+            newNodes = await this.getDirDataAPIWithLoading(node.id);
+            cache[node.id] = newNodes;
+          }
 
           this.setState({
             ...this.state,
-            nodes: newNodes.data,
+            nodes: newNodes,
             path: [...this.state.path, node],
           });
         } else if (node.type === 'FILE') {
           this.imageView.setState(node.filePath);
         }
       },
-      onClickBack: async () => {
-        // TODO: Cache
+      onClickBack: () => {
         const newState = { ...this.state };
         newState.path.pop();
         const targetNode = newState.path[newState.path.length - 1];
 
-        const newId = targetNode ? targetNode.id : null; // root 확인
-        const newNodes = await this.getDirDataAPIWithLoading(newId);
-        newState.nodes = newNodes.data;
+        const newId = targetNode ? targetNode.id : '0'; // root 확인
+        newState.nodes = cache[newId];
 
         this.setState(newState);
       },
@@ -82,7 +86,6 @@ export default class App {
 
   setState(newState) {
     this.state = newState;
-    console.log(this.state);
 
     // Breadcrumb 업데이트
     this.breadcrumb.setState(this.state.path);
@@ -94,7 +97,9 @@ export default class App {
 
   async init() {
     const rootNodes = await this.getDirDataAPIWithLoading();
-    const newState = { ...this.state, nodes: rootNodes.data };
+    const newState = { ...this.state, nodes: rootNodes };
     this.setState(newState);
+
+    cache['0'] = rootNodes;
   }
 }
