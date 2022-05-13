@@ -1,4 +1,4 @@
-import { getNodesById } from './util/api.js';
+import { getNodesById } from './api/cats.js';
 import Breadcrumb from './components/Breadcrumb.js';
 import Nodes from './components/Nodes.js';
 import ImageView from './components/ImageView.js';
