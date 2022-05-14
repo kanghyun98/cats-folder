@@ -1,18 +1,19 @@
 export default class Nodes {
-  constructor({ $app, nodes, onClickIcon, onClickBackIcon }) {
+  constructor({ $app, nodes, handleClickIcon, handleClickBackIcon }) {
     this.state = {
       nodes,
-      isRoot: true,
+      isRoot: true, // 초기엔 root
     };
-    this.handleClickIcon = onClickIcon;
-    this.handleClickBackIcon = onClickBackIcon;
+    this.onClickIcon = handleClickIcon;
+    this.onClickBackIcon = handleClickBackIcon;
 
     this.$nodes = document.createElement('ul');
     this.$nodes.classList.add('Nodes');
-    this.addEvent(this.$nodes);
     $app.appendChild(this.$nodes);
 
-    this.render(true); // 초기엔 root
+    this.addEvent(this.$nodes);
+
+    this.render();
   }
 
   // Nodes 상태 업데이트
@@ -37,10 +38,10 @@ export default class Nodes {
           const targetNode = this.state.nodes.find(
             (node) => node.id === nodeId
           );
-          this.handleClickIcon(targetNode);
+          this.onClickIcon(targetNode);
         } else {
           // 뒤로가기 클릭 시
-          this.handleClickBackIcon();
+          this.onClickBackIcon();
         }
       }
     });
@@ -68,8 +69,8 @@ export default class Nodes {
 
       $icons += `
           <div class=Node id=${id}>
-             <img src=${iconImgPath} /> 
-             <div>${name}</div>
+            <img src=${iconImgPath} /> 
+            <div>${name}</div>
           </div>
       `;
     });

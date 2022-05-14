@@ -1,12 +1,13 @@
 export default class Breadcrumb {
-  constructor({ $app, path, onClickPath }) {
+  constructor({ $app, path, handleClickPath }) {
     this.state = path;
-    this.handleClickPath = onClickPath;
+    this.onClickPath = handleClickPath;
 
     this.$nav = document.createElement('nav');
     this.$nav.classList.add('Breadcrumb');
-    this.addEvent(this.$nav);
     $app.appendChild(this.$nav);
+
+    this.addEvent(this.$nav);
 
     this.render();
   }
@@ -23,7 +24,7 @@ export default class Breadcrumb {
       const $breadcrumbItem = e.target.closest('.BreadcrumbItem');
 
       if ($breadcrumbItem) {
-        this.handleClickPath($breadcrumbItem);
+        this.onClickPath($breadcrumbItem);
       }
     });
   }

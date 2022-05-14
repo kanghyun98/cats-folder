@@ -36,8 +36,14 @@ export default class ImageView {
     const $modalOverlay = document.createElement('div');
     $modalOverlay.classList.add('ModalOverlay');
 
-    // 모달 닫기 이벤트 (외부 클릭, esc 클릭)
-    $modalOverlay.addEventListener('click', () => {
+    this.$modalWrapper.appendChild($modalOverlay);
+    this.$modalWrapper.appendChild($modalContent);
+
+    this.addCloseEvents($modalOverlay);
+  }
+
+  addCloseEvents($target) {
+    $target.addEventListener('click', () => {
       this.closeModal();
     });
 
@@ -46,9 +52,6 @@ export default class ImageView {
         this.closeModal();
       }
     });
-
-    this.$modalWrapper.appendChild($modalOverlay);
-    this.$modalWrapper.appendChild($modalContent);
   }
 
   closeModal() {

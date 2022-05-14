@@ -20,7 +20,7 @@ export default class App {
     this.breadcrumb = new Breadcrumb({
       $app,
       path: this.state.path,
-      onClickPath: ($target) => {
+      handleClickPath: ($target) => {
         if (Number($target.id) < this.state.path.length) {
           const newPath = this.state.path.slice(0, Number($target.id));
           const newNodes = cache[newPath[newPath.length - 1]?.id || '0'];
@@ -38,16 +38,19 @@ export default class App {
     this.nodes = new Nodes({
       $app,
       nodes: this.state.nodes,
-      onClickIcon: async (targetNode) => {
+      handleClickIcon: async (targetNode) => {
         if (targetNode.type === 'DIRECTORY') {
           // 폴더 클릭 시, 하위 폴더로 이동
           let newNodes;
-          if (cache[targetNode.id]) {
-            newNodes = cache[targetNode.id]; // 캐싱
-          } else {
+
+          newNodes = cache[targetNode.id]; // 캐싱
+
+          // 캐시에 없으면 새로 가져오기
+          if (!cache[targetNode.id]) {
             newNodes = await this.getNodesByIdWithLoading(targetNode.id);
             cache[targetNode.id] = newNodes;
           }
+
           const newPath = [...this.state.path, targetNode];
           const newState = {
             nodes: newNodes,
@@ -60,7 +63,7 @@ export default class App {
           this.imageView.setState(targetNode.filePath);
         }
       },
-      onClickBackIcon: () => {
+      handleClickBackIcon: () => {
         const newPath = [...this.state.path];
         newPath.pop();
 

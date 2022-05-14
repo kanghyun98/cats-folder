@@ -1,5 +1,4 @@
-// fetch를 이용한 API 요청 데이터를 반환하는 API
-export const getAsync = async (url) => {
+export const GetAsync = async (url) => {
   try {
     const response = await fetch(url);
 
